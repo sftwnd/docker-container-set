@@ -1,0 +1,73 @@
+#!/bin/bash
+DOCKER_IMAGE_NAME=centos-latest
+DOCKER_CONTAINER_NAME=centos
+DOCKER_CONTAINER_HOST_NAME=centos-linux
+
+if [ "${1}" == "clean" ] || [ "${1}" == "rm" ]; then
+  if [ "${2}" == "-f" ] || [ "${3}" == "--force" ]; then
+    docker stop "${DOCKER_CONTAINER_NAME}" 2>/dev/null
+  elif [ "$(docker ps|grep -E "^.*\s+${DOCKER_IMAGE_NAME}\s+.*\s+${DOCKER_CONTAINER_NAME}\s*$"|wc -l|xargs)" == "1" ]; then
+    echo Unable to remove started container. Use: "$(basename $0)" clean --force
+  fi
+  docker rm "${DOCKER_CONTAINER_NAME}" 2>/dev/null
+  docker rmi "${DOCKER_IMAGE_NAME}" 2>/dev/null
+  exit 0
+elif [ "${1}" == "ln" ] || [ "${1}" == "link" ]; then
+  sudo ln -s "$(realpath $0)" "/usr/local/bin/$(basename $0)"
+  exit 0;
+elif [ "${1}" == "ulink" ] || [ "${1}" == "unlink" ]; then
+  sudo rm /usr/local/bin/$(basename $0)
+  exit 0;
+fi
+
+USERNAME=${USER}
+USERID=$(id -u|xargs)
+GROUPNAME=$(id -g -n|xargs)
+GROUPID=$(id -g|xargs)
+
+if [ "$(docker images|grep -E "^$DOCKER_IMAGE_NAME\s+latest.*$"|wc -l|xargs)" == "0" ]; then
+
+  echo Build Linux image: ${DOCKER_IMAGE_NAME}
+  echo   User name      : ${USERNAME}
+  echo   User id        : ${USERID}
+  echo   Group name     : ${GROUPNAME}
+  echo   Group id       : ${GROUPID}
+  echo   Host name      : ${DOCKER_CONTAINER_HOST_NAME}
+
+  if [ ! -f "Dockerfile" ]; then
+    DOCKER_BUIL_DPATH=$(dirname $(realpath $0))
+    echo Docker build path: $DOCKER_BUIL_DPATH
+  else
+    DOCKER_BUIL_DPATH=.
+  fi
+
+  docker build \
+  	--tag "${DOCKER_IMAGE_NAME}" \
+  	--build-arg="USERNAME=${USERNAME}" \
+  	--build-arg="USERID=${USERID}" \
+  	--build-arg="GROUPNAME=${GROUPNAME}" \
+  	--build-arg="GROUPID=${GROUPID}" \
+  	${DOCKER_BUIL_DPATH}
+fi
+
+if [ ! "$(docker images|grep -E "^$DOCKER_IMAGE_NAME\s+latest.*$"|wc -l|xargs)" == "0" ]; then
+  if [ "$(docker ps|grep -E "^.*\s+${DOCKER_IMAGE_NAME}\s+.*\s+${DOCKER_CONTAINER_NAME}\s*$"|wc -l|xargs)" == "1" ]; then
+    echo Attach to docker container: $DOCKER_CONTAINER_NAME
+    docker attach "${DOCKER_CONTAINER_NAME}"
+  elif [ "$(docker ps -a|grep -E "^.*\s+${DOCKER_IMAGE_NAME}\s+.*Exited.*\s+${DOCKER_CONTAINER_NAME}\s*$"|wc -l|xargs)" == "1" ]; then
+    echo Start docker container: $DOCKER_CONTAINER_NAME
+    docker start --attach "${DOCKER_CONTAINER_NAME}"
+  else
+    if [ "$1" == "-rm" ]; then
+      RM_ARG=--rm
+    fi
+    echo Run container: ${DOCKER_CONTAINER_NAME} $RM_ARG
+     docker run -it $RM_ARG \
+       --mount type=bind,source=$HOME/Desktop,target=/home/${USERNAME}/Desktop \
+       --mount type=bind,source=$HOME/Documents,target=/home/${USERNAME}/Documents \
+       --hostname "${DOCKER_CONTAINER_HOST_NAME}" \
+	     --name "${DOCKER_CONTAINER_NAME}" "${DOCKER_IMAGE_NAME}"
+  fi
+else
+	echo Docker image: $DOCKER_IMAGE_NAME does not exists. Unable to run container: $DOCKER_CONTAINER_NAME
+fi
