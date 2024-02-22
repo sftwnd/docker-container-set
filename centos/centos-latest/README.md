@@ -33,7 +33,14 @@ Centos container based on centos:latest docker hub container
 _**./centos link**_: link centos as /usr/local/bin/centos
 _**./centos unlink**_: unlink centos from /usr/local/bin/centos
 
-### Run linux in container
+### Run/Start linux in container
 
-_**./centos**_: run centos container and save it on exit
-_**./centos --rm**_: run centos container and remove it on exit
+_**./centos**_: run centos container and save it on exit  
+_**./centos --rm**_: run centos container and remove it on    
+_**./centos**_ ... -cw: run centos container, mount current folder to ~/Work and set ~/Work as workdir
+
+### Remove linux in container
+
+_**./centos [clear|rm|rmi]**_: remove image and container (if stopped)  
+_**./centos [rmc]**_: remove container (if stopped)  
+_**./centos [clear|rm|rmi|rmc] [-f|--force]**_: force stop and remove  
