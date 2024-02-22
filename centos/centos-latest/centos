@@ -74,13 +74,15 @@ if [ ! "$(docker images|grep -E "^$DOCKER_IMAGE_NAME\s+latest.*$"|wc -l|xargs)" 
       done
     fi
 
-    echo Run container: ${DOCKER_CONTAINER_NAME} $RM_ARG
+    echo Run container: ${DOCKER_CONTAINER_NAME}
     docker run -it $RM_ARG \
        $MNT_ARG --mount type=bind,source=$HOME/Desktop,target=/home/${USERNAME}/Desktop \
        --mount type=bind,source=$HOME/Documents,target=/home/${USERNAME}/Documents \
        --hostname "${DOCKER_CONTAINER_HOST_NAME}" \
 	     --name "${DOCKER_CONTAINER_NAME}" \
        --workdir "${WORKDIR}" \
+       --publish 2122:22 \
+       --publish 2180:80 \
        "${DOCKER_IMAGE_NAME}"
   fi
 else
