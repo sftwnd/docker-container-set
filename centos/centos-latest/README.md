@@ -41,6 +41,6 @@ _**./centos**_ ... -cw: run centos container, mount current folder to ~/Work and
 
 ### Remove linux in container
 
-_**./centos [clear|rm|rmi]**_: remove image and container (if stopped)  
+_**./centos [rm|rmi]**_: remove image and container (if stopped)  
 _**./centos [rmc]**_: remove container (if stopped)  
-_**./centos [clear|rm|rmi|rmc] [-f|--force]**_: force stop and remove  
+_**./centos [rm|rmi|rmc] [-f|--force]**_: force stop and remove  

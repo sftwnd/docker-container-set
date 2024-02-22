@@ -3,14 +3,14 @@ DOCKER_IMAGE_NAME=centos-latest
 DOCKER_CONTAINER_NAME=centos
 DOCKER_CONTAINER_HOST_NAME=centos-linux
 
-if [ "${1}" == "clean" ] || [ "${1}" == "rm" ] || [ "${1}" == "rmc" ] || [ "${1}" == "rmi" ]; then
+if [ "${1}" == "rm" ] || [ "${1}" == "rmi" ] || [ "${1}" == "rmc" ]; then
   if [ "${2}" == "-f" ] || [ "${3}" == "--force" ]; then
     docker stop "${DOCKER_CONTAINER_NAME}" 2>/dev/null
   elif [ "$(docker ps|grep -E "^.*\s+${DOCKER_IMAGE_NAME}\s+.*\s+${DOCKER_CONTAINER_NAME}\s*$"|wc -l|xargs)" == "1" ]; then
     echo Unable to remove started container. Use: "$(basename $0)" clean --force
   fi
   docker rm "${DOCKER_CONTAINER_NAME}" 2>/dev/null
-  if [ "${1}" == "clean" ] || [ "${1}" == "rm" ] || [ "${1}" == "rmi" ]; then
+  if [ "${1}" == "rm" ] || [ "${1}" == "rmi" ]; then
     docker rmi "${DOCKER_IMAGE_NAME}" 2>/dev/null
   fi
   exit 0
@@ -60,9 +60,14 @@ if [ ! "$(docker images|grep -E "^$DOCKER_IMAGE_NAME\s+latest.*$"|wc -l|xargs)" 
     echo Start docker container: $DOCKER_CONTAINER_NAME
     docker start -ia "${DOCKER_CONTAINER_NAME}"
   else
-    if [ ! "$1" == "-p" ] && [ ! "$1" == "--persistent" ]; then
-      RM_ARG=--rm
-    fi
+
+    RM_ARG=--rm
+    for arg in "$@"; do
+      if [ "$1" == "-p" ] && [ "$1" == "--persistent" ]; then
+        unset RM_ARG
+      fi
+    done
+
     MNT_ARG=
     WORKDIR=/home/${USERNAME}
     if [[ "$#" -gt 0 ]]; then
