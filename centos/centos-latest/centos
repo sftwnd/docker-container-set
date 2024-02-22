@@ -60,10 +60,9 @@ if [ ! "$(docker images|grep -E "^$DOCKER_IMAGE_NAME\s+latest.*$"|wc -l|xargs)" 
     echo Start docker container: $DOCKER_CONTAINER_NAME
     docker start -ia "${DOCKER_CONTAINER_NAME}"
   else
-    if [ "$1" == "-rm" ]; then
+    if [ ! "$1" == "-p" ] && [ ! "$1" == "--persistent" ]; then
       RM_ARG=--rm
     fi
-
     MNT_ARG=
     WORKDIR=/home/${USERNAME}
     if [[ "$#" -gt 0 ]]; then

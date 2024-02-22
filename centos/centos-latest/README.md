@@ -35,8 +35,8 @@ _**./centos unlink**_: unlink centos from /usr/local/bin/centos
 
 ### Run/Start linux in container
 
-_**./centos**_: run centos container and save it on exit  
-_**./centos --rm**_: run centos container and remove it on    
+_**./centos [-p|--persistent]**_: run centos container and save it on exit  
+_**./centos**_: run centos container and remove it on exit    
 _**./centos**_ ... -cw: run centos container, mount current folder to ~/Work and set ~/Work as workdir
 
 ### Remove linux in container
