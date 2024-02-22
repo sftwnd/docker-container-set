@@ -6,7 +6,7 @@ ARG GROUPNAME=staff
 ARG GROUPID=20
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* \
  && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* \
- && yum install -y man-pages man-db man glibc-langpack-en glibc-langpack-ru passwd openssh-clients openssh-server ftp rsync zip vim unzip curl wget sudo \
+ && yum install -y man-pages man-db man glibc-langpack-en glibc-langpack-ru passwd openssh-clients openssh-server ftp rsync zip nano vim unzip curl wget sudo \
  && yum clean all \
  && usermod -p "" root \
  && groupadd -g 20 -f ${GROUPNAME} \
