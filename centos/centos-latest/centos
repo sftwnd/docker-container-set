@@ -62,9 +62,11 @@ if [ ! "$(docker images|grep -E "^$DOCKER_IMAGE_NAME\s+latest.*$"|wc -l|xargs)" 
   else
 
     RM_ARG=--rm
+    CONTAINER_MODE=removable
     for arg in "$@"; do
-      if [ "$1" == "-p" ] && [ "$1" == "--persistent" ]; then
+      if [ "${arg}" == "-p" ] || [ "${arg}" == "--persistent" ]; then
         unset RM_ARG
+        CONTAINER_MODE=persistent
       fi
     done
 
@@ -79,7 +81,7 @@ if [ ! "$(docker images|grep -E "^$DOCKER_IMAGE_NAME\s+latest.*$"|wc -l|xargs)" 
       done
     fi
 
-    echo Run container: ${DOCKER_CONTAINER_NAME}
+    echo Run container: ${DOCKER_CONTAINER_NAME} ${CONTAINER_MODE}
     docker run -it $RM_ARG \
        $MNT_ARG --mount type=bind,source=$HOME/Desktop,target=/home/${USERNAME}/Desktop \
        --mount type=bind,source=$HOME/Documents,target=/home/${USERNAME}/Documents \
