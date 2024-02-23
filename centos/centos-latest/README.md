@@ -72,7 +72,7 @@ Centos container based on centos:latest docker hub container
 
 * install firefox by: _**sudo yum install -y firefox**_
 * run _**xhost +**_ on host os
-* start firefox: _**firefox**_ or _** firefox >**/dev/null 2**>**/dev/null **&**_
+* start firefox: _**firefox**_ or _**firefox >**/dev/null 2**>**/dev/null **&**_
 
 ## Use Subline text
 
