@@ -52,7 +52,7 @@ Centos container based on centos:latest docker hub container
 
 * _**./centos [-p|--persistent]**_: run centos container and save it on exit  
 * _**./centos**_: run centos container and remove it on exit    
-* _**./centos** ... -cw**_: run centos container, mount current folder to ~/Work and set ~/Work as workdir
+* _**./centos** ... **-cw**_: run centos container, mount current folder to ~/Work and set ~/Work as workdir
 
 ### Remove linux in container
 
