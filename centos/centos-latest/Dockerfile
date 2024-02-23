@@ -6,7 +6,7 @@ ARG GROUPNAME=staff
 ARG GROUPID=20
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* \
  && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* \
- && yum install -y man-pages man-db man glibc-langpack-en glibc-langpack-ru passwd openssh-clients openssh-server ftp rsync zip nano vim unzip curl wget sudo \
+ && yum install -y man-pages man-db man glibc-langpack-en glibc-langpack-ru passwd openssh-clients openssh-server ftp rsync zip nano vim unzip curl wget sudo libGL \
  && yum clean all \
  && usermod -p "" root \
  && groupadd -g 20 -f ${GROUPNAME} \
@@ -19,8 +19,17 @@ RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* \
  && ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' \
  && ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' \
  && ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' \
+ && dbus-uuidgen > /var/lib/dbus/machine-id \
+ && ssh-keygen -t ed25519 -b 4096 -C "${USERNAME}@centos-linux" -f /tmp/id_ed25519 -N '' \ 
+ && mkdir "/home/${USERNAME}/.ssh" \
+ && mv /tmp/id_ed25519 "/home/${USERNAME}/.ssh" \ 
+ && chmod -R 700 "/home/${USERNAME}/.ssh" \
+ && chown -R $USERID:$GROUPID "/home/${USERNAME}/.ssh" \
+ && ssh-keygen -t ed25519 -b 4096 -C "root@centos-linux" -f ~/.ssh/id_ed25519 -N '' \ 
  && rm -rf /tmp/*
 ENV LOCALE=en_RU.UTF-8
+# gateway.docker.internal, docker.for.mac.host.internal, host.docker.internal , docker.for.mac.host.internal, docker.for.mac.localhost
+ENV DISPLAY=docker.for.mac.host.internal:0
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 EXPOSE 22 80 8080

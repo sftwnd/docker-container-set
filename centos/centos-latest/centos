@@ -83,6 +83,7 @@ if [ ! "$(docker images|grep -E "^$DOCKER_IMAGE_NAME\s+latest.*$"|wc -l|xargs)" 
     docker run -it $RM_ARG \
        $MNT_ARG --mount type=bind,source=$HOME/Desktop,target=/home/${USERNAME}/Desktop \
        --mount type=bind,source=$HOME/Documents,target=/home/${USERNAME}/Documents \
+       --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix \
        --hostname "${DOCKER_CONTAINER_HOST_NAME}" \
 	     --name "${DOCKER_CONTAINER_NAME}" \
        --workdir "${WORKDIR}" \
